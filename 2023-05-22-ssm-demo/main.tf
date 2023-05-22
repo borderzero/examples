@@ -3,6 +3,12 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "instance_count" {
+  description = "Number of instances to create"
+  default     = 3
+}
+
+
 provider "aws" {
   region = var.region
 }
@@ -125,12 +131,13 @@ data "aws_ami" "ubuntu-image" {
 
 # Now create the EC2 instance. Place it in the private subnet and attach the IAM role
 resource "aws_instance" "main" {
+  count = var.instance_count
   ami           = data.aws_ami.ubuntu-image.id  
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.private.id 
   iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
   
   tags = {
-    Name = "ssm-border0-demo"
+    Name = "ssm-border0-demo-${count.index}"
   }
 }
