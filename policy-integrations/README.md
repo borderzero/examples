@@ -2,6 +2,11 @@
 
 This is an example project demonstrating how to integrate with the Border0 Policy Engine. This Flask application exposes a number of endpoints that can be called by the Border0 Policy Engine. It allows users to define their own logic and specify their own conditions for who should have access, using their own data and logic.
 
+For more details also see:
+https://www.border0.com/blogs/the-most-flexible-policy-engine-in-the-world
+and 
+https://docs.border0.com/docs/the-generic-http-api-integration
+
 ## Endpoints
 
 The following endpoints are available:
@@ -15,6 +20,8 @@ The following endpoints are available:
 - `/businesshours`: This endpoint checks if the request is made within business hours (between 9am and 6pm local time, Monday through Friday).
 
 Each endpoint requires a valid 'Authorization' header with a secret key. The default secret key is 'superSecret', but can be changed by setting the 'API_SECRET' environment variable.
+
+
 
 ## Setup
 

@@ -20,8 +20,7 @@ def friday_rule_policy():
   try:
     data = request.json
     ip = data['ip']
-    #protocol = data['protocol']
-    #email = data['email']
+    
 
     tz_info = get_timezone(ip)
     current_day = datetime.now(pytz.timezone(tz_info['timezone'])).weekday()
@@ -93,10 +92,15 @@ def rain_or_shine_policy():
     location = tz_info['city'] + ',' + tz_info['countryCode']
 
     # WeatherAPI Key
-    weather_api_key = '3fd855a8e2a347ff863153348233005'
+    #https://www.weatherapi.com/my/ 
+    weather_api_key = ''
+    if 'WEATHER_API_KEY' == '':
+        app.logger.error(f"Error occurred: WEATHER_API_KEY not set")
+        return jsonify({'error': "WEATHER_API_KEY not set, create one here https://www.weatherapi.com/my/"}), 400
+
 
     # WeatherAPI endpoint
-    weather_url = f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location}"
+    weather_url = f"https://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location}"
 
     # Fetching the weather data
     weather_data = requests.get(weather_url).json()
