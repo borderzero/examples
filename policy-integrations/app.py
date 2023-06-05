@@ -9,6 +9,8 @@ import requests
 
 # default to 'superSecret' if not set
 API_SECRET = os.environ.get('API_SECRET', 'superSecret')  
+WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY', '')  
+
 
 tzcache = {}
 app = Flask(__name__)
@@ -93,14 +95,13 @@ def rain_or_shine_policy():
 
     # WeatherAPI Key
     #https://www.weatherapi.com/my/ 
-    weather_api_key = ''
-    if 'WEATHER_API_KEY' == '':
+    if WEATHER_API_KEY == '':
         app.logger.error(f"Error occurred: WEATHER_API_KEY not set")
         return jsonify({'error': "WEATHER_API_KEY not set, create one here https://www.weatherapi.com/my/"}), 400
 
 
     # WeatherAPI endpoint
-    weather_url = f"https://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location}"
+    weather_url = f"https://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY }&q={location}"
 
     # Fetching the weather data
     weather_data = requests.get(weather_url).json()
