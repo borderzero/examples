@@ -1,0 +1,69 @@
+Parameters:
+  AllowRdsReadOnly:
+    Description: 'Flag to attach RDS read-only IAM policy'
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+  AllowEc2ReadOnly:
+    Description: 'Flag to attach EC2 read-only IAM policy'
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+  AllowEcsReadOnly:
+    Description: 'Flag to attach ECS read-only IAM policy'
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+
+Conditions:
+  AttachRdsDiscoveryPolicy: !Equals [!Ref AllowRdsReadOnly, 'true']
+  AttachEc2DiscoveryPolicy: !Equals [!Ref AllowEc2ReadOnly, 'true']
+  AttachEcsDiscoveryPolicy: !Equals [!Ref AllowEcsReadOnly, 'true']
+
+Resources:
+  Border0DiscoveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Border0DiscoveryRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::774169227652:root # border0 staging
+                - !Sub arn:aws:iam::235487987553:root # border0 production
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !If [AttachRdsDiscoveryPolicy, 'arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess', !Ref "AWS::NoValue"]
+        - !If [AttachEc2DiscoveryPolicy, 'arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess', !Ref "AWS::NoValue"]
+  # there is no AWS managed ReadOnly policy for ECS, so we have to create one
+  EcsReadOnlyPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: 'ECSReadOnlyPolicy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'ECSReadOnly'
+            Effect: 'Allow'
+            Action:
+              - 'ecs:DescribeClusters'
+              - 'ecs:DescribeContainerInstances'
+              - 'ecs:DescribeServices'
+              - 'ecs:DescribeTaskDefinition'
+              - 'ecs:DescribeTasks'
+              - 'ecs:ListClusters'
+              - 'ecs:ListContainerInstances'
+              - 'ecs:ListServices'
+              - 'ecs:ListTaskDefinitionFamilies'
+              - 'ecs:ListTaskDefinitions'
+              - 'ecs:ListTasks'
+            Resource: '*'
+      Roles: [!If [AttachEcsDiscoveryPolicy, !Ref Border0DiscoveryRole, !Ref "AWS::NoValue"]]
