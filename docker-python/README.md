@@ -1,5 +1,10 @@
 This example demonstrates how to make a simple python app in Docker available via Border0
 
+## Youtube Video demo
+  [![Video demo](https://img.youtube.com/vi/SrT0V4QCUgM/0.jpg)](https://www.youtube.com/watch?v=SrT0V4QCUgM "video demo python docker")
+  
+  https://www.youtube.com/watch?v=SrT0V4QCUgM
+  
 We have 3 files
 Dockerfile       
 border0.yaml     
@@ -22,3 +27,6 @@ You can change the name by changing the name of the socket in the border0.yaml f
 
 You can play with policies here and control who has access to this new service:
 https://portal.border0.com/policies
+  
+
+  
