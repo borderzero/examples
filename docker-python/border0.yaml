@@ -1,0 +1,15 @@
+connector:
+  name: ecs-app
+  provider-type: AWS # Optional
+  provider-enviroment: "Staging"  # Optional
+  provider-region: us-east-2  # Optional
+
+# Using env vars instead
+#credentials:
+#  token: xxxx
+
+sockets:
+- web:
+    type: http
+    port: 12345
+    host: 127.0.0.1
