@@ -3,10 +3,16 @@ Parameters:
     Type: String
     Description: The AWS CloudWatch Logs "log group" name for Border0 to write logs to.
     Default: border0-events-sink
-  AssumeRolePassphrase:
+  AssumeRoleName:
+    Type: String
+    Description: The name for the Border0 cloudwatch integration role (for Border0 to assume).
+    MinLength: 5
+    AllowedPattern: ^[\w+=,.@:\/-]*$
+    Default: Border0CloudWatchIntegrationRole
+  AssumeRoleExternalId:
     Type: String
     Description: A (secret) string that Border0 must present in order to assume a role in the account.
-    MinLength: 15
+    MinLength: 20
     AllowedPattern: ^[\w+=,.@:\/-]*$
 
 Resources:
@@ -17,7 +23,7 @@ Resources:
   Border0CloudWatchIntegrationRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: Border0CloudWatchIntegrationRole
+      RoleName: !Ref AssumeRoleName
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -29,7 +35,7 @@ Resources:
             Action: sts:AssumeRole
             Condition:
               StringEquals:
-                sts:ExternalId: !Ref AssumeRolePassphrase
+                sts:ExternalId: !Ref AssumeRoleExternalId
   Border0CloudWatchIntegrationRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -58,4 +64,4 @@ Outputs:
     Value: !GetAtt Border0CloudWatchIntegrationRole.Arn
   ExternalID:
     Description: "The (secret) string that Border0 must present in order to assume a role in the account."
-    Value: !Ref AssumeRolePassphrase
+    Value: !Ref AssumeRoleExternalId
