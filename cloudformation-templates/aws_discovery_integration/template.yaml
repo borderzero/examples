@@ -1,25 +1,36 @@
 Parameters:
+  AssumeRoleName:
+    Type: String
+    Description: The name for the Border0 discovery role (for Border0 to assume).
+    MinLength: 5
+    AllowedPattern: ^[\w+=,.@:\/-]*$
+    Default: 'Border0DiscoveryRole'
+  AssumeRoleExternalId:
+    Type: String
+    Description: A (secret) string that Border0 must present in order to assume a role in the account.
+    MinLength: 20
+    AllowedPattern: ^[\w+=,.@:\/-]*$
   AllowRdsReadOnly:
     Description: 'Flag to attach RDS read-only IAM policy'
     Type: String
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'false'
+    Default: 'true'
   AllowEc2ReadOnly:
     Description: 'Flag to attach EC2 read-only IAM policy'
     Type: String
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'false'
+    Default: 'true'
   AllowEcsReadOnly:
     Description: 'Flag to attach ECS read-only IAM policy'
     Type: String
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'false'
+    Default: 'true'
 
 Conditions:
   AttachRdsDiscoveryPolicy: !Equals [!Ref AllowRdsReadOnly, 'true']
@@ -30,7 +41,7 @@ Resources:
   Border0DiscoveryRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: Border0DiscoveryRole
+      RoleName: !Ref AssumeRoleName
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -40,6 +51,9 @@ Resources:
                 - !Sub arn:aws:iam::774169227652:root # border0 staging
                 - !Sub arn:aws:iam::235487987553:root # border0 production
             Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref AssumeRoleExternalId
       ManagedPolicyArns:
         - !If [AttachRdsDiscoveryPolicy, 'arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess', !Ref "AWS::NoValue"]
         - !If [AttachEc2DiscoveryPolicy, 'arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess', !Ref "AWS::NoValue"]
@@ -67,3 +81,11 @@ Resources:
               - 'ecs:ListTasks'
             Resource: '*'
       Roles: [!If [AttachEcsDiscoveryPolicy, !Ref Border0DiscoveryRole, !Ref "AWS::NoValue"]]
+
+Outputs:
+  Border0DiscoveryRoleARN:
+    Description: "The ARN of the AWS IAM Role in this account for Border0 to assume."
+    Value: !GetAtt Border0DiscoveryRole.Arn
+  ExternalID:
+    Description: "The (secret) string that Border0 must present in order to assume a role in the account."
+    Value: !Ref AssumeRoleExternalId
