@@ -27,7 +27,7 @@ Parameters:
 ####################################
 Resources:
 
-  EC2InstanceRole:
+  ConnectorInstanceRole:
     Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
@@ -54,7 +54,7 @@ Resources:
                   - 'ssm:GetParameters'
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Border0TokenSsmParameter}'
 
-  InstanceSecurityGroup:
+  ConnectorInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Security Group for instance with only egress allowed
@@ -63,13 +63,13 @@ Resources:
         - CidrIp: 0.0.0.0/0
           IpProtocol: -1
 
-  InstanceProfile:
+  ConnectorInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
       Roles:
         - !Ref EC2InstanceRole
 
-  LaunchConfiguration:
+  ConnectorInstanceLaunchConfiguration:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       IamInstanceProfile: !Ref InstanceProfile
@@ -100,7 +100,7 @@ Resources:
 
             border0 connector start --config border0.yaml
 
-  AutoScalingGroup:
+  ConnectorInstanceAutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
       MinSize: '1'
