@@ -67,16 +67,16 @@ Resources:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
       Roles:
-        - !Ref EC2InstanceRole
+        - !Ref ConnectorInstanceRole
 
   ConnectorInstanceLaunchConfiguration:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
-      IamInstanceProfile: !Ref InstanceProfile
+      IamInstanceProfile: !Ref ConnectorInstanceProfile
       ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-minimal-kernel-default-arm64}}'
       InstanceType: !Ref InstanceType
       SecurityGroups:
-        - !Ref InstanceSecurityGroup
+        - !Ref ConnectorInstanceSecurityGroup
       AssociatePublicIpAddress: true
       UserData:
         Fn::Base64:
@@ -106,7 +106,7 @@ Resources:
       MinSize: '1'
       MaxSize: '1'
       DesiredCapacity: '1'
-      LaunchConfigurationName: !Ref LaunchConfiguration
+      LaunchConfigurationName: !Ref ConnectorInstanceLaunchConfiguration
       VPCZoneIdentifier:
         - !Ref SubnetId
       MetricsCollection:
