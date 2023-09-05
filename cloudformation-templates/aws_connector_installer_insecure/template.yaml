@@ -13,14 +13,9 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Subnet where to run the connector
 
-  InstanceType:
-    Type: String
-    Description: The EC2 Instance Type for the connector instance
-    Default: t4g.nano
-
-  Border0TokenSsmParameter:
-    Type: AWS::SSM::Parameter::Name
-    Description: The name/path of the SSM parameter for the Border0 token (which the connector instance uses to authenticate against your Border0 organization)
+  Border0Token:
+    Type: String 
+    Description: The Border0 token (which the connector instance uses to authenticate against your Border0 organization)
 
 ####################################
 ##           RESOURCES            ##
@@ -63,19 +58,6 @@ Resources:
                   - 'ecs:ListTaskDefinitions'
                   - 'ecs:ListTasks'
                 Resource: '*'
-        # SSM Parameter ReadOnly access to the SSM parameter of the connector's token.
-        - PolicyName: AccessToBorder0TokenSsmParameter
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action: 'ssm:DescribeParameters'
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*'
-              - Effect: Allow
-                Action:
-                  - 'ssm:GetParameter'
-                  - 'ssm:GetParameters'
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Border0TokenSsmParameter}'
         # Allow generating temporary user credentials for database IAM access.
         - PolicyName: GenerateTemporaryDatabaseCredsForRds
           PolicyDocument:
@@ -152,7 +134,7 @@ Resources:
               #!/bin/bash -xe
               sudo curl https://download.border0.com/linux_arm64/border0 -o /usr/local/bin/border0
               sudo chmod +x /usr/local/bin/border0
-              sudo border0 connector install --v2 --daemon-only --token from:aws:ssm:${Border0TokenSsmParameter}
+              sudo border0 connector install --v2 --daemon-only --token ${Border0Token}
 
   ConnectorInstanceAutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
