@@ -1,0 +1,36 @@
+name: Test Border0 Policy
+
+env:
+  BORDER0_ADMIN_TOKEN: ${{ secrets.BORDER0_ADMIN_TOKEN }}
+
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   types:
+  #     - opened
+
+jobs:
+  process-json-files:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      json_files: ${{ steps.changed_files.outputs.json_files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get list of changed policy files
+        id: changed_files
+        run: |
+          json_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.json$' | xargs)
+          echo "::set-output name=json_files::$json_files"
+
+      - name: Run test command for each policy file
+        run: |
+          for file in ${{ steps.changed_files.outputs.json_files }}
+          do
+            echo "Processing $file"
+            policy_name=$(echo $file | sed 's/\.json$//')
+            echo "Policy name: $policy_name"
+            border0 policy edit --policy-file=$file --name=$policy_name
+          done

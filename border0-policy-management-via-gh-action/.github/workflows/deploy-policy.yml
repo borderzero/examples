@@ -1,0 +1,40 @@
+name: Deploy Border0 Policy
+
+env:
+  BORDER0_ADMIN_TOKEN: ${{ secrets.BORDER0_ADMIN_TOKEN }}
+
+on:
+  pull_request:
+    types:
+      - closed
+    paths:
+      - "*.json"
+
+
+jobs:
+  update-border0-policy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      json_files: ${{ steps.changed_files.outputs.json_files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      - name: Install Border0 CLI
+        run: |
+          sudo curl https://download.border0.com/linux_amd64/border0 -o /usr/bin/border0
+          sudo chmod +x /usr/bin/border0
+
+      - name: Run update command for all policy files
+        run: |
+          export json_files=$(ls *.json | xargs)
+          for file in $json_files;
+          do
+            policy_name=$(echo $file | sed 's/\.json$//')
+            echo -e "\nProcessing $file : policy name: $policy_name"
+            border0 policy edit --policy-file=$file --name=$policy_name
+          done          
+
+#eof

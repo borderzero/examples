@@ -1,0 +1,39 @@
+{
+  "action": [
+    "database",
+    "http"
+  ],
+  "condition": {
+    "when": {},
+    "where": {
+      "allowed_ip": [
+        "0.0.0.0/0"
+      ],
+      "country": [
+        "DE",
+        "CA",
+        "SG"
+      ]
+    },
+    "who": {
+      "email": [
+        "linda.brown@border0.com",
+        "james.davis@border0.com",
+        "jennifer.miller@border0.com",
+        "robert.wilson@border0.com",
+        "mary.moore@border0.com",
+        "hans.schmidt@border0.com",
+        "ursula.muller@border0.com",
+        "johannes.schneider@border0.com",
+        "anna.meyer@border0.com",
+        "heinrich.wagner@border0.com",
+        "tan.wei@border0.com",
+        "lim.jia@border0.com",
+        "ng.yi@border0.com",
+        "lee.min@border0.com",
+        "goh.shan@border0.com"
+      ]
+    }
+  },
+  "version": "v1"
+}

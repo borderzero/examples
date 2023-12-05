@@ -1,0 +1,27 @@
+{
+  "action": [
+    "database",
+    "ssh",
+    "http"
+  ],
+  "condition": {
+    "when": {},
+    "where": {
+      "allowed_ip": [
+        "0.0.0.0/0",
+        "::/0"
+      ],
+      "country": [
+        "JP",
+        "US",
+        "NL"
+      ]
+    },
+    "who": {
+      "domain": [
+        "netops.border0.com"
+      ]
+    }
+  },
+  "version": "v1"
+}
