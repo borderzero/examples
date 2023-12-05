@@ -1,0 +1,24 @@
+{
+  "action": [
+    "database",
+    "http",
+    "ssh"
+  ],
+  "condition": {
+    "when": {},
+    "where": {
+      "allowed_ip": [
+        "0.0.0.0/0"
+      ],
+      "country": []
+    },
+    "who": {
+      "email": [
+        "project.manager@3rd-party-contracting.company",
+        "fancy.architect@design-firm.info"
+      ],
+      "domain": []
+    }
+  },
+  "version": "v1"
+}
