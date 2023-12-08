@@ -1,0 +1,78 @@
+# Prerequisites:
+# - Create a connector (via the api or portal)
+# - Create a token for the connector (via the api or portal)
+# - Replace "[[ YOUR TOKEN GOES HERE ]]" below with your token
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: border0-connector
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: border0-connector
+rules:
+  # rule for connector to list namespaces and pods
+  - apiGroups: [""]
+    resources: ["namespaces", "pods"]
+    verbs: ["list"]
+  # rule for connector to get pods (incl. its containers)
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get"]
+  # rule for connector to create exec streams into pods
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: border0-connector
+subjects:
+  - kind: ServiceAccount
+    name: border0-connector
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: border0-connector
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connector-config
+data:
+  config.yaml: |
+    token: [[ YOUR TOKEN GOES HERE ]]
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: border0-connector
+  name: border0-connector
+spec:
+  selector:
+    matchLabels:
+      app: border0-connector
+  template:
+    metadata:
+      labels:
+        app: border0-connector
+    spec:
+      serviceAccount: border0-connector
+      containers:
+        - image: ghcr.io/borderzero/border0:latest
+          name: border0-connector
+          args: ["connector", "start", "--config", "/etc/border0-connector/config.yaml"]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/border0-connector
+      volumes:
+        - name: config
+          configMap:
+            name: connector-config
+
