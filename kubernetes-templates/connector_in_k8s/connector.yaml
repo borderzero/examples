@@ -45,6 +45,7 @@ metadata:
   name: connector-config
 data:
   config.yaml: |
+    # e.g. token: eyJhbGciOiJIUzI1NiIsIn...
     token: [[ YOUR TOKEN GOES HERE ]]
 
 ---
