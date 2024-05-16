@@ -1,0 +1,79 @@
+{
+    "sockets": {
+        "webapp": {
+            "service_type": "http",
+            "http_service_configuration": {
+                "http_service_type": "standard",
+                "standard_http_service_configuration": {
+                    "host_header": "localhost",
+                    "hostname": "http.playground.border0.io",
+                    "port": 80
+                }
+            }
+        },
+        "service-x": {
+            "service_type": "ssh",
+            "ssh_service_configuration": {
+                "ssh_service_type": "standard",
+                "standard_ssh_service_configuration": {
+                    "hostname": "ssh.playground.border0.io",
+                    "port": 22,
+                    "ssh_authentication_type": "username_and_password",
+                    "username_and_password_auth_configuration": {
+                        "username_provider": "defined",
+                        "username": "border0",
+                        "password": "Border0<3Ssh"
+                    }
+                }
+            }
+        },
+        "service-y": {
+            "service_type": "ssh",
+            "ssh_service_configuration": {
+                "ssh_service_type": "standard",
+                "standard_ssh_service_configuration": {
+                    "hostname": "ssh.playground.border0.io",
+                    "port": 22,
+                    "ssh_authentication_type": "username_and_password",
+                    "username_and_password_auth_configuration": {
+                        "username_provider": "defined",
+                        "username": "border0",
+                        "password": "Border0<3Ssh"
+                    }
+                }
+            }
+        }
+    },
+    "connectors": [
+        "01-enabling-krill",
+        "02-busy-coyote",
+        "03-pleasing-polecat",
+        "04-rational-shark",
+        "05-climbing-rabbit",
+        "06-choice-thrush",
+        "07-grateful-rodent",
+        "08-creative-turkey",
+        "09-fond-primate",
+        "10-sweeping-kite",
+        "11-special-shad",
+        "12-sunny-dinosaur",
+        "13-boss-weevil",
+        "14-included-piranha",
+        "15-alive-dory",
+        "16-trusted-pheasant",
+        "17-artistic-bluejay",
+        "18-workable-collie",
+        "19-quiet-pup",
+        "20-massive-cub",
+        "21-alert-impala",
+        "22-mint-adder",
+        "23-curious-cougar",
+        "24-easy-monarch",
+        "25-polished-turtle",
+        "26-endless-escargot",
+        "27-relative-jaybird",
+        "28-logical-panda",
+        "29-credible-tiger",
+        "30-safe-rat"
+    ]
+}
