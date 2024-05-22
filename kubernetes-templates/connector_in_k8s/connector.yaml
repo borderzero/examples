@@ -13,9 +13,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: border0-connector
 rules:
-  # rule for connector to list namespaces and pods
+  # rule for connector to list namespaces, services, and pods
   - apiGroups: [""]
-    resources: ["namespaces", "pods"]
+    resources: ["namespaces", "services", "pods"]
     verbs: ["list"]
   # rule for connector to get pods (incl. its containers)
   - apiGroups: [""]
