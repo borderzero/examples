@@ -13,18 +13,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: border0-connector
 rules:
-  # rule for connector to list namespaces, services, and pods
-  - apiGroups: [""]
-    resources: ["namespaces", "services", "pods"]
-    verbs: ["list"]
-  # rule for connector to get pods (incl. its containers)
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get"]
-  # rule for connector to create exec streams into pods
-  - apiGroups: [""]
-    resources: ["pods/exec"]
-    verbs: ["create"]
+  # rule for connector to have unrestricted access to the kubernetes api.
+  # you should modify this in accordance with your organization's needs.
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
