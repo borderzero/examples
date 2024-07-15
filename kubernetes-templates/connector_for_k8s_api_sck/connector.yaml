@@ -17,7 +17,7 @@ rules:
   # you should modify this in accordance with your organization's needs.
   - apiGroups: ["*"]
     resources: ["*"]
-    verbs: ["*]
+    verbs: ["*"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
