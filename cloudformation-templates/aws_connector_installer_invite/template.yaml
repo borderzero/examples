@@ -158,6 +158,8 @@ Resources:
           Fn::Base64:
             !Sub |
               #!/bin/bash -xe
+              sudo yum update -y
+              sudo yum install -y iptables
               sudo curl https://download.border0.com/linux_arm64/border0 -o /usr/local/bin/border0
               sudo chmod +x /usr/local/bin/border0
               export AWS_REGION="${AWS::Region}"
