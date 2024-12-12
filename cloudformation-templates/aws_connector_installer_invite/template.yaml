@@ -130,8 +130,14 @@ Resources:
       GroupDescription: Security Group for instance with only egress allowed
       VpcId: !Ref VpcId
       SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
+        - Description: Allow outbound traffic to all destinations and protocols
+          CidrIp: 0.0.0.0/0
           IpProtocol: -1
+      SecurityGroupIngress:
+        - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector
+          CidrIp: 0.0.0.0/0
+          IpProtocol: udp
+          ToPort: 32442
 
   ConnectorInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
