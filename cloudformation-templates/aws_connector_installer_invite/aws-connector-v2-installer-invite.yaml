@@ -134,16 +134,18 @@ Resources:
           CidrIp: 0.0.0.0/0
           IpProtocol: -1
         - Description: Allow outbound traffic to all destinations and protocols over IPv6
-          CidrIp: ::/0
+          CidrIpv6: ::/0
           IpProtocol: -1
       SecurityGroupIngress:
         - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv4
           CidrIp: 0.0.0.0/0
           IpProtocol: udp
+          FromPort: 32442
           ToPort: 32442
         - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv6
           CidrIpv6: ::/0
           IpProtocol: udp
+          FromPort: 32442
           ToPort: 32442
 
   ConnectorInstanceProfile:
@@ -167,7 +169,7 @@ Resources:
             DeleteOnTermination: true
             Groups:
             - !Ref ConnectorInstanceSecurityGroup
-            Ipv6AddressCount: 1  # automatically assign one IPv6 address
+            # Ipv6AddressCount: 1  # uncomment to automatically assign one IPv6 address, subnet must have IPv6 range(s).
         UserData:
           Fn::Base64:
             !Sub |

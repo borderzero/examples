@@ -13,21 +13,9 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Subnet where to run the connector
 
-  InstanceType:
-    Type: String
-    Description: The EC2 Instance Type for the connector instance
-    Default: t4g.nano
-
-  Border0TokenSsmParameter:
-    Type: AWS::SSM::Parameter::Name
-    Description: The name/path of the SSM parameter for the Border0 token (which the connector instance uses to authenticate against your Border0 organization)
-
-####################################
-##           CONDITIONS           ##
-####################################
-Conditions:
-
-  Border0TokenSsmParameterStartsWithSlash: !Equals [ !Select [ 0, !Split [ "/", !Ref Border0TokenSsmParameter ] ], "" ]
+  Border0Token:
+    Type: String 
+    Description: The Border0 token (which the connector instance uses to authenticate against your Border0 organization)
 
 ####################################
 ##           RESOURCES            ##
@@ -80,25 +68,6 @@ Resources:
                   - 'eks:ListClusters'
                   - 'eks:DescribeCluster'
                 Resource: '*'
-        # SSM Parameter ReadOnly access to the SSM parameter of the connector's token.
-        - PolicyName: AccessToBorder0TokenSsmParameter
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action: 'ssm:DescribeParameters'
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*'
-              - Effect: Allow
-                Action:
-                  - 'ssm:GetParameter'
-                  - 'ssm:GetParameters'
-                Resource:
-                  # SSM parameters can begin with a slash character '/'. When they begin
-                  # with a slash character, it must be ommitted from the resource ARN here.
-                  Fn::Sub:
-                    - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${SsmParameterPath}
-                    - SsmParameterPath:
-                        !If [Border0TokenSsmParameterStartsWithSlash, !Sub "${Border0TokenSsmParameter}", !Sub "/${Border0TokenSsmParameter}"]
         # Allow generating temporary user credentials for database IAM access.
         - PolicyName: GenerateTemporaryDatabaseCredsForRds
           PolicyDocument:
@@ -149,16 +118,18 @@ Resources:
           CidrIp: 0.0.0.0/0
           IpProtocol: -1
         - Description: Allow outbound traffic to all destinations and protocols over IPv6
-          CidrIp: ::/0
+          CidrIpv6: ::/0
           IpProtocol: -1
       SecurityGroupIngress:
         - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv4
           CidrIp: 0.0.0.0/0
           IpProtocol: udp
+          FromPort: 32442
           ToPort: 32442
         - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv6
           CidrIpv6: ::/0
           IpProtocol: udp
+          FromPort: 32442
           ToPort: 32442
 
   ConnectorInstanceProfile:
@@ -175,14 +146,14 @@ Resources:
         IamInstanceProfile:
           Arn: !GetAtt ConnectorInstanceProfile.Arn
         ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64}}'
-        InstanceType: !Ref InstanceType
+        InstanceType: "t4g.nano"
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: true
             DeleteOnTermination: true
             Groups:
             - !Ref ConnectorInstanceSecurityGroup
-            Ipv6AddressCount: 1  # automatically assign one IPv6 address
+            # Ipv6AddressCount: 1  # uncomment to automatically assign one IPv6 address, subnet must have IPv6 range(s).
         UserData:
           Fn::Base64:
             !Sub |
@@ -191,7 +162,7 @@ Resources:
               sudo yum install -y iptables
               sudo curl https://download.border0.com/linux_arm64/border0 -o /usr/local/bin/border0
               sudo chmod +x /usr/local/bin/border0
-              sudo border0 connector install --daemon-only --token from:aws:ssm:${Border0TokenSsmParameter}
+              sudo border0 connector install --daemon-only --token ${Border0Token}
 
   ConnectorInstanceAutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
