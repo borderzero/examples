@@ -13,6 +13,16 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Subnet where to run the connector
 
+  # t4g.nano  : 2 vCPU, 0.5 GiB, US$0.0042/hr ~= US$3.03/mo  (on-demand pricing)
+  # t4g.micro : 2 vCPU, 1.0 GiB, US$0.0084/hr ~= US$6.05/mo  (on-demand pricing)
+  # t4g.small : 2 vCPU, 2.0 GiB, US$0.0168/hr ~= US$12.10/mo (on-demand pricing)
+  #
+  # https://aws.amazon.com/ec2/pricing/on-demand/
+  InstanceType:
+    Type: String
+    Description: The EC2 Instance Type for the connector instance (> t4g.micro recommended)
+    Default: t4g.micro
+
   Border0Token:
     Type: String 
     Description: The Border0 token (which the connector instance uses to authenticate against your Border0 organization)
@@ -146,7 +156,7 @@ Resources:
         IamInstanceProfile:
           Arn: !GetAtt ConnectorInstanceProfile.Arn
         ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64}}'
-        InstanceType: "t4g.nano"
+        InstanceType: !Ref InstanceType
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: true
