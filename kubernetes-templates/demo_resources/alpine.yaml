@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alpine
+  template:
+    metadata:
+      labels:
+        app: alpine
+    spec:
+      containers:
+      - name: alpine
+        image: public.ecr.aws/docker/library/alpine:latest
+        command: ["tail", "-f", "/dev/null"] # keep it alive

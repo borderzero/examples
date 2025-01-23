@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ubuntu
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: public.ecr.aws/ubuntu/ubuntu:latest
+        command: ["tail", "-f", "/dev/null"] # keep it alive
