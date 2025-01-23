@@ -47,6 +47,7 @@ data:
   config.yaml: |
     # e.g. token: eyJhbGciOiJIUzI1NiIsIn...
     token: [[ YOUR TOKEN GOES HERE ]]
+    device_state_path: /etc/border0-device/state.yaml
 
 ---
 apiVersion: apps/v1
@@ -73,8 +74,15 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/border0-connector
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+          securityContext:
+            capabilities:
+              add: [ NET_ADMIN, NET_RAW ] # NET_RAW is not used today but we anticipate using it in the future.
       volumes:
         - name: config
           configMap:
             name: connector-config
-
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
