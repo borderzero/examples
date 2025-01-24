@@ -58,6 +58,7 @@ spec:
       labels:
         app: border0-connector
     spec:
+      hostNetwork: true
       serviceAccount: border0-connector
       containers:
         - image: ghcr.io/borderzero/border0:latest # we recommend pinning on a specific tag
@@ -70,6 +71,7 @@ spec:
             - name: dev-net-tun
               mountPath: /dev/net/tun
           securityContext:
+            privileged: true
             capabilities:
               add: [ NET_ADMIN, NET_RAW ] # NET_RAW is not used today but we anticipate using it in the future.
       volumes:
