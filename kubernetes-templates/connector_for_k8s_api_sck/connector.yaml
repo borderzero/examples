@@ -70,6 +70,7 @@ spec:
             - name: dev-net-tun
               mountPath: /dev/net/tun
           securityContext:
+            privileged: true # required to create TUN iface.
             capabilities:
               add: [ NET_ADMIN, NET_RAW ] # NET_RAW is not used today but we anticipate using it in the future.
       volumes:
