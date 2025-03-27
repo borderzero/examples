@@ -102,7 +102,7 @@ Resources:
               - Effect: Allow
                 Action: 'ec2-instance-connect:OpenTunnel'
                 Resource: !Sub 'arn:aws:ec2:*:${AWS::AccountId}:instance-connect-endpoint/*'
-        # Allow starting and terminating ssm sessions to any instance (for ssm)
+        # Allow starting and terminating ssm sessions + sending commands to any instance (for ssm)
         - PolicyName: StartAndTerminateSsmSessions
           PolicyDocument:
             Version: '2012-10-17'
@@ -114,6 +114,16 @@ Resources:
                   - !Sub 'arn:aws:ec2:*:${AWS::AccountId}:instance/*'
                   - !Sub 'arn:aws:ssm:*:${AWS::AccountId}:document/AWS-StartSSHSession' # legacy
                   - !Sub 'arn:aws:ssm:*:${AWS::AccountId}:document/SSM-SessionManagerRunShell'
+              - Effect: Allow
+                Action: 'ssm:SendCommand'
+                Resource:
+                  - !Sub 'arn:aws:ecs:*:${AWS::AccountId}:task/*'
+                  - !Sub 'arn:aws:ec2:*:${AWS::AccountId}:instance/*'
+                  - 'arn:aws:ssm:*::document/AWS-RunShellScript'
+                  - 'arn:aws:ssm:*::document/AWS-RunPowerShellScript' # for windows targets
+              - Effect: Allow
+                Action: 'ssm:GetCommandInvocation'
+                Resource: 'arn:aws:ssm:*:${AWS::AccountId}:*'
               - Effect: Allow
                 Action: 'ssm:TerminateSession'
                 Resource:
