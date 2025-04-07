@@ -149,7 +149,7 @@ Resources:
                   - 'arn:aws:ssm:*::document/AWS-RunPowerShellScript' # for windows targets
               - Effect: Allow
                 Action: 'ssm:GetCommandInvocation'
-                Resource: 'arn:aws:ssm:*:${AWS::AccountId}:*'
+                Resource: !Sub 'arn:aws:ssm:*:${AWS::AccountId}:*'
               - Effect: Allow
                 Action: 'ssm:TerminateSession'
                 Resource:
