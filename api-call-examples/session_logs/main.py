@@ -58,7 +58,7 @@ class StateManager:
 
     def update_run_time(self) -> None:
         """Update last run time to current UTC time."""
-        self.last_run_time = datetime.datetime.now(datetime.UTC).isoformat()
+        self.last_run_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     def add_processed_session(self, session_id: SessionID) -> None:
         """Mark a session as processed."""
@@ -179,7 +179,7 @@ def fetch_session_recordings(border0_api: Border0API, session: SessionDict) -> S
             else:
                 recording["recording_data"] = parse_jsonl_recording_data(recording_data)
         else:
-            recording["recordings_data"] = []
+            recording["recording_data"] = []
 
     return session_copy
 
@@ -220,11 +220,11 @@ def main() -> None:
     border0_api = Border0API(BORDER0_API_TOKEN)
 
     # Use last run time as start_date if available, otherwise use 1 day ago window
-    yesterday = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=1)
+    yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
 
     # RFC3339 format by explicitly formatting with Z for UTC timezone
     start_date = state_manager.last_run_time or yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
-    end_date = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    end_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     filters: SessionFilter = {
         start_date: start_date,
