@@ -1,6 +1,6 @@
 # Expiring Policies
 
-Simply export your Border0 API (with admin privileges) as:
+Simply export your Border0 API token (with admin privileges) as:
 
 ```
 export BORDER0_API_TOKEN=eyJhbGciOiJIUzI1.....
