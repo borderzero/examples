@@ -72,8 +72,8 @@ class StateManager:
 
 class SessionFilter(TypedDict, total=False):
     """SessionFilter: session filter parameters."""
-    start_date: str
-    end_date: str
+    start_date_after: str
+    start_date_before: str
     finished: bool
 
 
@@ -223,12 +223,12 @@ def main() -> None:
     yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
 
     # RFC3339 format by explicitly formatting with Z for UTC timezone
-    start_date = state_manager.last_run_time or yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
-    end_date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    start_date_after = state_manager.last_run_time or yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
+    start_date_before = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     filters: SessionFilter = {
-        start_date: start_date,
-        end_date: end_date
+        start_date_after: start_date_after,
+        start_date_before: start_date_before
     }
 
     try:
