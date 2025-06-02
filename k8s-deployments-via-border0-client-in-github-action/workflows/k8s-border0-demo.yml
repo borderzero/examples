@@ -1,0 +1,52 @@
+# Demo: Kubernetes via GitHub Actions with Border0
+#
+# This workflow demonstrates how to install and configure a Border0 node
+# on an Ubuntu GitHub Actions runner. It downloads the Border0 client,
+# installs it, starts the VPN, and checks peer connectivity.
+#
+# Requirements:
+#   - Set the secret `K8S_BORDER0_TOKEN` in your repository settings.
+#
+# Usage:
+#   Trigger manually via "Run workflow" in the Actions tab.
+
+name: "Demo: Kubernetes via GitHub Actions with Border0"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install-border0-node:
+    name: Install and Configure Border0 Node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Grant execute permission for the install script
+        run: |
+          chmod +x k8s-via-gh-action/*.sh
+
+      - name: Install and start Border0 node
+        env:
+          BORDER0_TOKEN: ${{ secrets.K8S_BORDER0_TOKEN }}
+        run: |
+          sudo env BORDER0_TOKEN="${BORDER0_TOKEN}" \
+            k8s-via-gh-action/install-border0.sh
+
+      - name: Download and configure kubectl
+        run: |
+          k8s-via-gh-action/configure-kubectl.sh
+
+      - name: Deploy to Kubernetes
+        run: |
+          k8s-via-gh-action/deploy-to-k8s.sh
+
+      - name: Gracefully shutdown and cleanup Border0 device
+        if: always()
+        continue-on-error: true
+        env:
+          BORDER0_TOKEN: ${{ secrets.K8S_BORDER0_TOKEN }}
+        run: |
+          sudo env BORDER0_TOKEN="${BORDER0_TOKEN}" \
+            k8s-via-gh-action/cleanup-border0-device.sh
