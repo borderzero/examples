@@ -31,7 +31,7 @@ The `cleanup-border0-device.sh` script performs the following steps:
 
 - A Border0 Service account and API token. More details [here](https://docs.border0.com/docs/service-accounts).
 - A Border0 Socket for your Kubernetes API server (e.g., `fra-k8s-cluster`). More details [here](https://docs.border0.com/docs/kubernetes-api-sockets)
-- Access Policy Allowing the Service Account to connect to the Socket. More details [here](https://docs.border0.com/docs/kubernetes-api-sockets#policy-based-access)
+- (INPORTANT!) You need to Assing your Service Account to an Access Policy. More details [here](https://docs.border0.com/docs/kubernetes-api-sockets#policy-based-access)
 
 ### Usage
 
