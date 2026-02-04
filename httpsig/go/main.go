@@ -195,7 +195,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage:\n")
 		fmt.Fprintf(os.Stderr, "  %s --jwks_url <https://example.com/.well-known/jwks.json>\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "\nExample:\n")
-		fmt.Fprintf(os.Stderr, "  %s --jwks_url https://signing.staging.border0.io/keys\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s --jwks_url https://signing.border0.io/keys\n", os.Args[0])
 		os.Exit(1)
 	}
 

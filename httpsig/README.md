@@ -6,7 +6,7 @@ Verify Ed25519 signatures on HTTP requests signed by Border0/OpenResty.
 
 ```bash
 cd go
-go run main.go --jwks_url https://signing.staging.border0.io/keys
+go run main.go --jwks_url https://signing.border0.io/keys
 ```
 
 Server runs on `:8080` and verifies all incoming requests.

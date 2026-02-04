@@ -289,7 +289,7 @@ class SignatureVerifier
 function verifyWithJWKS()
 {
     try {
-        $verifier = new SignatureVerifier('https://signing.staging.border0.io/keys');
+        $verifier = new SignatureVerifier('https://signing.border0.io/keys');
         $verifier->loadPublicKeysFromJWKS();
 
         $result = $verifier->verifyCurrentRequest();
