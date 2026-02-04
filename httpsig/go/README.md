@@ -3,7 +3,7 @@
 ## Run
 
 ```bash
-go run main.go --jwks_url https://signing.staging.border0.io/keys
+go run main.go --jwks_url https://signing.border0.io/keys
 ```
 
 Server listens on `:8080` and verifies Ed25519 signatures on all requests.
@@ -12,7 +12,7 @@ Server listens on `:8080` and verifies Ed25519 signatures on all requests.
 
 ```go
 // Load keys from JWKS
-publicKeys, _ := loadPublicKeysFromJWKS("https://signing.staging.border0.io/keys")
+publicKeys, _ := loadPublicKeysFromJWKS("https://signing.border0.io/keys")
 
 // Create handler
 handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

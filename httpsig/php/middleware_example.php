@@ -74,7 +74,7 @@ function signatureMiddleware($jwksUrl)
 // ============================================================================
 
 // Apply signature verification middleware
-signatureMiddleware('https://signing.staging.border0.io/keys');
+signatureMiddleware('https://signing.border0.io/keys');
 
 // If we reach here, the signature was verified successfully!
 

@@ -20,7 +20,7 @@ All requests are verified before processing.
 require_once 'verify_signature.php';
 
 // Initialize with JWKS URL
-$verifier = new SignatureVerifier('https://signing.staging.border0.io/keys');
+$verifier = new SignatureVerifier('https://signing.border0.io/keys');
 $verifier->loadPublicKeysFromJWKS();
 
 // Verify current request
