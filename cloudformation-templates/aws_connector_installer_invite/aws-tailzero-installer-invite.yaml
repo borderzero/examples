@@ -161,16 +161,16 @@ Resources:
           CidrIpv6: ::/0
           IpProtocol: -1
       SecurityGroupIngress:
-        - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv4
+        - Description: Allow inbound WireGuard (udp) traffic for Tailzero Connector (tsnet) over IPv4
           CidrIp: 0.0.0.0/0
           IpProtocol: udp
-          FromPort: 32442
-          ToPort: 32442
-        - Description: Allow inbound WireGuard (udp) traffic for Border0 Connector over IPv6
+          FromPort: 41641
+          ToPort: 41641
+        - Description: Allow inbound WireGuard (udp) traffic for Tailzero Connector (tsnet) over IPv6
           CidrIpv6: ::/0
           IpProtocol: udp
-          FromPort: 32442
-          ToPort: 32442
+          FromPort: 41641
+          ToPort: 41641
 
   ConnectorInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
@@ -198,12 +198,10 @@ Resources:
           Fn::Base64:
             !Sub |
               #!/bin/bash -xe
-              sudo yum update -y
-              sudo yum install -y iptables
-              sudo curl https://download.border0.com/linux_arm64/border0 -o /usr/local/bin/border0
-              sudo chmod +x /usr/local/bin/border0
               export AWS_REGION="${AWS::Region}"
-              sudo -E border0 connector install --daemon-only --invite ${InviteCode} --token-persistence-ssm-path /border0/connector-tokens/for-invite-${InviteCode}
+              curl -fsSL https://tailscale.border0.com/tailzero/install.sh | sh -s -- \
+                --invite ${InviteCode} \
+                --cache-ssm-path /border0/connector-tokens/for-invite-${InviteCode}
 
   ConnectorInstanceAutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
