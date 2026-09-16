@@ -1,0 +1,66 @@
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: The name of the S3 bucket to store the session recordings.
+  AssumeRoleName:
+    Type: String
+    Description: The name for the role (for Border0 to assume).
+    MinLength: 5
+    AllowedPattern: ^[\w+=,.@:\/-]*$
+    Default: Border0S3RecordingsRole
+  AssumeRoleExternalId:
+    Type: String
+    Description: A (secret) string that Border0 must present in order to assume a role in the account.
+    MinLength: 2
+    AllowedPattern: ^[\w+=,.@:\/-]*$
+
+Resources:
+  Border0S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3BucketName
+  Border0S3RecordingsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref AssumeRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::235487987553:root # border0 production
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref AssumeRoleExternalId
+  Border0S3RecordingsRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: Border0S3RecordingsRolePolicy
+      Roles:
+        - !Ref Border0S3RecordingsRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowAccessS3Bucket
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:GetBucketLocation
+            Resource:
+              - !Sub 'arn:aws:s3:::${Border0S3Bucket}'
+              - !Sub 'arn:aws:s3:::${Border0S3Bucket}/*'
+
+Outputs:
+  Border0S3BucketARN:
+    Description: "The ARN of the AWS S3 bucket in this account for Border0 to manage."
+    Value: !GetAtt Border0S3Bucket.Arn
+  Border0S3RecordingsRoleARN:
+    Description: "The ARN of the AWS IAM Role in this account for Border0 to assume."
+    Value: !GetAtt Border0S3RecordingsRole.Arn
+  ExternalID:
+    Description: "The (secret) string that Border0 must present in order to assume a role in the account."
+    Value: !Ref AssumeRoleExternalId
